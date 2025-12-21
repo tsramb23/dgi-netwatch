@@ -4,7 +4,7 @@ metadata:
   name: dgi-netwatch
   namespace: production
 spec:
-  replicas: 2
+  replicas: 1  # Réduit de 2 à 1 pour économiser des ressources
   selector:
     matchLabels:
       app: dgi-netwatch
@@ -23,6 +23,10 @@ spec:
           value: "production"
         - name: DB_PATH
           value: "/app/db/surveillance.db"
+        resources:
+          requests:
+            cpu: "100m"      # Minimum pour Autopilot
+            memory: "128Mi"  # Minimum pour Autopilot
         volumeMounts:
         - name: db-volume
           mountPath: /app/db
@@ -33,6 +37,10 @@ spec:
         env:
         - name: REACT_APP_API_URL
           value: "http://localhost:3001"
+        resources:
+          requests:
+            cpu: "100m"      # Minimum pour Autopilot
+            memory: "128Mi"  # Minimum pour Autopilot
       volumes:
       - name: db-volume
         emptyDir: {}
