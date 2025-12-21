@@ -1,0 +1,46 @@
+name: Deploy to GKE
+
+on:
+  workflow_run:
+    workflows: ["Build & Push Docker Images"]
+    types:
+      - completed
+
+env:
+  PROJECT_ID: dgi-cosmic-20251210-1542
+  CLUSTER_NAME: dgi-cluster
+  REGION: us-central1
+  NAMESPACE: production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Auth to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure kubectl
+        run: |
+          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region=${{ env.REGION }} --project=${{ env.PROJECT_ID }}
+
+      - name: Deploy DGI-NetWatch
+        run: |
+          kubectl apply -f k8s/deployment.yaml -n ${{ env.NAMESPACE }}
+          kubectl apply -f k8s/service.yaml -n ${{ env.NAMESPACE }}
+
+      - name: Wait for deployment
+        run: kubectl rollout status deployment/dgi-netwatch -n ${{ env.NAMESPACE }} --timeout=300s
+
+      - name: Get LoadBalancer IP
+        run: |
+          echo "🎉 DGI-NetWatch déployé sur :"
+          kubectl get svc dgi-netwatch-service -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'

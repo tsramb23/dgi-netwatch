@@ -1,0 +1,34 @@
+name: Build & Push Docker Images
+
+on:
+  push:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME_BACKEND: dgi-netwatch-backend
+  IMAGE_NAME_FRONTEND: dgi-netwatch-frontend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and push Backend
+        run: |
+          docker build -f Dockerfile.backend -t ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME_BACKEND }}:latest .
+          docker push ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME_BACKEND }}:latest
+
+      - name: Build and push Frontend
+        run: |
+          docker build -f Dockerfile.frontend -t ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME_FRONTEND }}:latest .
+          docker push ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
