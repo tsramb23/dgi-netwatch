@@ -1,0 +1,21 @@
+# Dockerfile pour le backend DGI-NetWatch
+# Image de base : Node.js 18 sur Alpine Linux (léger et sécurisé)
+FROM node:18-alpine
+
+# Définir le répertoire de travail dans le conteneur
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY backend/package*.json ./
+
+# Installer les dépendances npm en mode production
+RUN npm ci --only=production
+
+# Copier le code source du backend
+COPY backend/ .
+
+# Exposer le port du backend
+EXPOSE 3001
+
+# Commande de démarrage du serveur
+CMD ["node", "server.js"]

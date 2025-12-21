@@ -1,0 +1,47 @@
+version: '3.8'
+
+# Configuration Docker Compose pour DGI-NetWatch
+# Services : backend (Node.js) et frontend (Vite + React)
+
+services:
+  # Service Backend - API de monitoring
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: dgi-netwatch-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+    networks:
+      - dgi-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/sante"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Service Frontend - Interface de surveillance
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: dgi-netwatch-frontend
+    ports:
+      - "80:80"
+    environment:
+      - VITE_API_URL=http://localhost:3001
+    networks:
+      - dgi-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+# Réseau partagé pour la communication inter-services
+networks:
+  dgi-network:
+    driver: bridge

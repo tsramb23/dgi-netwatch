@@ -1,0 +1,562 @@
+/* ========================================
+   VARIABLES CSS - Thème et couleurs
+   ======================================== */
+:root {
+  /* Couleurs principales */
+  --couleur-fond-sombre: #2c3e50;
+  --couleur-fond-clair: #ecf0f1;
+  --couleur-texte-principal: #2c3e50;
+  --couleur-texte-secondaire: #7f8c8d;
+  --couleur-en-ligne: #27ae60;
+  --couleur-hors-ligne: #e74c3c;
+  --couleur-accent: #3498db;
+  --couleur-bordure: #bdc3c7;
+
+  /* Espacements */
+  --espacement-petit: 8px;
+  --espacement-moyen: 16px;
+  --espacement-grand: 24px;
+  --espacement-tres-grand: 32px;
+
+  /* Typographie */
+  --police-principale: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --taille-titre: 32px;
+  --taille-sous-titre: 14px;
+  --taille-nom-equipement: 18px;
+  --taille-label: 12px;
+  --taille-valeur: 14px;
+
+  /* Ombres et effets */
+  --ombre-legere: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --ombre-moyen: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --ombre-fort: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+  /* Transitions */
+  --transition-rapide: 0.15s ease-in-out;
+  --transition-normale: 0.3s ease-in-out;
+  --transition-lente: 0.5s ease-in-out;
+
+  /* Rayons de bordure */
+  --rayon-petit: 4px;
+  --rayon-moyen: 8px;
+  --rayon-grand: 12px;
+}
+
+/* ========================================
+   RÉINITIALISATION ET STYLES GLOBAUX
+   ======================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: var(--police-principale);
+  background-color: var(--couleur-fond-clair);
+  color: var(--couleur-texte-principal);
+  line-height: 1.6;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================
+   CONTENEUR PRINCIPAL
+   ======================================== */
+.conteneur-principal {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* ========================================
+   EN-TÊTE
+   ======================================== */
+.en-tete {
+  background: linear-gradient(135deg, var(--couleur-fond-sombre) 0%, #34495e 100%);
+  color: white;
+  padding: var(--espacement-tres-grand) var(--espacement-grand);
+  box-shadow: var(--ombre-moyen);
+  animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.en-tete-contenu {
+  margin-bottom: var(--espacement-grand);
+}
+
+.titre {
+  font-size: var(--taille-titre);
+  font-weight: 700;
+  margin-bottom: var(--espacement-petit);
+  letter-spacing: 0.5px;
+}
+
+.sous-titre {
+  font-size: var(--taille-sous-titre);
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Statistiques globales dans l'en-tête */
+.statistiques-globales {
+  display: flex;
+  gap: var(--espacement-grand);
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: var(--espacement-moyen) var(--espacement-grand);
+  border-radius: var(--rayon-moyen);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all var(--transition-normale);
+}
+
+.stat:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.stat .label {
+  font-size: var(--taille-label);
+  opacity: 0.85;
+  margin-bottom: var(--espacement-petit);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat .valeur {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.stat.en-ligne .valeur {
+  color: #2ecc71;
+}
+
+.stat.hors-ligne .valeur {
+  color: #e74c3c;
+}
+
+/* ========================================
+   CONTENU PRINCIPAL
+   ======================================== */
+.contenu-principal {
+  flex: 1;
+  padding: var(--espacement-tres-grand) var(--espacement-grand);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ========================================
+   MESSAGES D'ERREUR
+   ======================================== */
+.message-erreur {
+  background-color: #fadbd8;
+  border: 2px solid var(--couleur-hors-ligne);
+  border-radius: var(--rayon-moyen);
+  padding: var(--espacement-grand);
+  margin-bottom: var(--espacement-grand);
+  display: flex;
+  align-items: center;
+  gap: var(--espacement-moyen);
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.icone-erreur {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.message-erreur p {
+  color: var(--couleur-hors-ligne);
+  font-weight: 500;
+  flex: 1;
+}
+
+.bouton-reessayer {
+  background-color: var(--couleur-hors-ligne);
+  color: white;
+  border: none;
+  padding: var(--espacement-petit) var(--espacement-moyen);
+  border-radius: var(--rayon-petit);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all var(--transition-rapide);
+  white-space: nowrap;
+}
+
+.bouton-reessayer:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+}
+
+.bouton-reessayer:active {
+  transform: scale(0.98);
+}
+
+/* ========================================
+   INDICATEUR DE CHARGEMENT
+   ======================================== */
+.indicateur-chargement {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: var(--espacement-grand);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--couleur-bordure);
+  border-top-color: var(--couleur-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.indicateur-chargement p {
+  color: var(--couleur-texte-secondaire);
+  font-size: 16px;
+}
+
+/* ========================================
+   GRILLE D'ÉQUIPEMENTS
+   ======================================== */
+.grille-equipements {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--espacement-grand);
+  margin-bottom: var(--espacement-tres-grand);
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   CARTE D'ÉQUIPEMENT
+   ======================================== */
+.carte-equipement {
+  background: white;
+  border-radius: var(--rayon-grand);
+  box-shadow: var(--ombre-legere);
+  overflow: hidden;
+  transition: all var(--transition-normale);
+  border-left: 4px solid var(--couleur-bordure);
+  display: flex;
+  flex-direction: column;
+}
+
+.carte-equipement.en-ligne {
+  border-left-color: var(--couleur-en-ligne);
+}
+
+.carte-equipement.hors-ligne {
+  border-left-color: var(--couleur-hors-ligne);
+  opacity: 0.85;
+}
+
+.carte-equipement:hover {
+  box-shadow: var(--ombre-moyen);
+  transform: translateY(-4px);
+}
+
+.carte-equipement.hors-ligne:hover {
+  opacity: 1;
+}
+
+/* En-tête de la carte */
+.entete-carte {
+  padding: var(--espacement-moyen);
+  border-bottom: 1px solid var(--couleur-bordure);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--espacement-moyen);
+}
+
+.nom-equipement {
+  font-size: var(--taille-nom-equipement);
+  font-weight: 600;
+  color: var(--couleur-texte-principal);
+  margin: 0;
+  flex: 1;
+}
+
+/* Indicateur de statut */
+.indicateur-statut {
+  display: flex;
+  align-items: center;
+  gap: var(--espacement-petit);
+  padding: var(--espacement-petit) var(--espacement-moyen);
+  border-radius: var(--rayon-petit);
+  font-size: var(--taille-label);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.indicateur-statut.en-ligne {
+  background-color: #d5f4e6;
+  color: var(--couleur-en-ligne);
+}
+
+.indicateur-statut.hors-ligne {
+  background-color: #fadbd8;
+  color: var(--couleur-hors-ligne);
+}
+
+.point-statut {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.indicateur-statut.en-ligne .point-statut {
+  background-color: var(--couleur-en-ligne);
+}
+
+.indicateur-statut.hors-ligne .point-statut {
+  background-color: var(--couleur-hors-ligne);
+  animation: none;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.texte-statut {
+  font-size: var(--taille-label);
+}
+
+/* Contenu de la carte */
+.contenu-carte {
+  padding: var(--espacement-moyen);
+  flex: 1;
+}
+
+.ligne-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--espacement-moyen);
+  padding-bottom: var(--espacement-moyen);
+  border-bottom: 1px solid var(--couleur-fond-clair);
+}
+
+.ligne-info:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.label-info {
+  font-size: var(--taille-label);
+  color: var(--couleur-texte-secondaire);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.valeur-info {
+  font-size: var(--taille-valeur);
+  color: var(--couleur-texte-principal);
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+}
+
+/* Pied de la carte */
+.pied-carte {
+  padding: var(--espacement-moyen);
+  background-color: var(--couleur-fond-clair);
+  border-top: 1px solid var(--couleur-bordure);
+  text-align: right;
+}
+
+.horodatage-equipement {
+  font-size: var(--taille-label);
+  color: var(--couleur-texte-secondaire);
+  font-family: 'Courier New', monospace;
+}
+
+/* ========================================
+   PIED DE PAGE
+   ======================================== */
+.pied-page {
+  text-align: center;
+  padding: var(--espacement-grand);
+  border-top: 1px solid var(--couleur-bordure);
+  background-color: rgba(255, 255, 255, 0.5);
+  margin-top: var(--espacement-tres-grand);
+  animation: fadeIn 0.5s ease-out 0.3s both;
+}
+
+.texte-mise-a-jour {
+  font-size: var(--taille-valeur);
+  color: var(--couleur-texte-principal);
+  font-weight: 600;
+  margin-bottom: var(--espacement-petit);
+}
+
+.texte-rafraichissement {
+  font-size: var(--taille-label);
+  color: var(--couleur-texte-secondaire);
+  margin: 0;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablettes et petits écrans */
+@media (max-width: 768px) {
+  .en-tete {
+    padding: var(--espacement-grand) var(--espacement-moyen);
+  }
+
+  .titre {
+    font-size: 24px;
+  }
+
+  .statistiques-globales {
+    gap: var(--espacement-moyen);
+  }
+
+  .stat {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .contenu-principal {
+    padding: var(--espacement-grand) var(--espacement-moyen);
+  }
+
+  .grille-equipements {
+    grid-template-columns: 1fr;
+    gap: var(--espacement-moyen);
+  }
+}
+
+/* Petits téléphones */
+@media (max-width: 480px) {
+  .en-tete {
+    padding: var(--espacement-moyen);
+  }
+
+  .titre {
+    font-size: 20px;
+  }
+
+  .sous-titre {
+    font-size: 12px;
+  }
+
+  .statistiques-globales {
+    flex-direction: column;
+    gap: var(--espacement-moyen);
+  }
+
+  .stat {
+    width: 100%;
+  }
+
+  .contenu-principal {
+    padding: var(--espacement-moyen);
+  }
+
+  .entete-carte {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .indicateur-statut {
+    align-self: flex-start;
+  }
+
+  .nom-equipement {
+    font-size: 16px;
+  }
+
+  .ligne-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espacement-petit);
+  }
+
+  .label-info {
+    font-size: 11px;
+  }
+
+  .valeur-info {
+    font-size: 13px;
+  }
+}
+
+/* ========================================
+   IMPRESSION
+   ======================================== */
+@media print {
+  .en-tete {
+    background: none;
+    color: var(--couleur-texte-principal);
+    border-bottom: 2px solid var(--couleur-bordure);
+  }
+
+  .carte-equipement {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid var(--couleur-bordure);
+  }
+}

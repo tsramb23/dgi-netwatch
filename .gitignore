@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.log
+.env
+db/*.db
+db/*.sqlite
+*.tar.gz
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
