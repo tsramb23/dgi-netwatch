@@ -41,18 +41,12 @@ jobs:
         run: |
           terraform fmt -check || true
           terraform validate
-          terraform plan -out=tfplan -input=false \
-            -var="gcp_project_id=${{ env.PROJECT_ID }}" \
-            -var="gcp_region=${{ env.REGION }}" \
-            -var="gke_cluster_name=${{ env.CLUSTER_NAME }}"
+          terraform plan -out=tfplan -input=false
 
       - name: Terraform Apply
         working-directory: terraform
         run: |
-          terraform apply -input=false -auto-approve tfplan \
-            -var="gcp_project_id=${{ env.PROJECT_ID }}" \
-            -var="gcp_region=${{ env.REGION }}" \
-            -var="gke_cluster_name=${{ env.CLUSTER_NAME }}"
+          terraform apply -input=false -auto-approve tfplan
 
       - name: Wait for frontend rollout
         run: |
