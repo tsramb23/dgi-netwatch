@@ -10,19 +10,26 @@
 
 1. **Authenticate with GCP and configure kubectl:**
    ```bash
-   gcloud auth login
+   gcloud auth application-default login
    gcloud config set project <PROJECT_ID>
    gcloud container clusters get-credentials dgi_cluster --region us-central1 --project <PROJECT_ID>
    ```
 
-2. **From this `terraform/` directory:**
+2. **Create `terraform.tfvars` in the `terraform/` directory:**
+   ```hcl
+   gcp_project_id = "your-gcp-project-id"
+   gcp_region     = "us-central1"
+   gke_cluster_name = "dgi_cluster"
+   ```
+
+3. **From this `terraform/` directory:**
    ```bash
    terraform init
    terraform plan
    terraform apply
    ```
 
-3. **Access the frontend locally (ClusterIP only):**
+4. **Access the frontend locally (ClusterIP only):**
    ```bash
    kubectl port-forward svc/dgi-netwatch-frontend-service 8080:80 -n production
    ```
@@ -30,14 +37,37 @@
 
 ## CI/CD Pipeline (GitHub Actions)
 
-Two workflows are configured:
-- **`terraform.yml`** (PR-friendly): Runs `terraform plan` on pull requests to review changes
-- **`terraform.yml`** (on main): Runs `terraform apply` automatically on push to `main` branch
+### Setup GitHub Secrets
 
-Both workflows:
-1. Authenticate to GCP using `secrets.GCP_SA_KEY`
-2. Configure `kubectl` via `gcloud container clusters get-credentials`
-3. Run Terraform with kubeconfig from the runner's working directory
+Add the following secrets to your repository:
+- **`GCP_SA_KEY`**: Service account JSON key with GKE admin access
+- **`GCP_PROJECT_ID`**: Your GCP project ID
+
+### Workflow Configuration
+
+The workflow automatically:
+1. Authenticates to GCP using `GCP_SA_KEY`
+2. Configures Terraform with GCP credentials
+3. Runs `terraform plan` on PRs
+4. Runs `terraform apply` on push to main branch
+
+### Example GitHub Actions workflow snippet:
+```yaml
+- name: Authenticate to Google Cloud
+  uses: google-github-actions/auth@v1
+  with:
+    credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+- name: Set up Cloud SDK
+  uses: google-github-actions/setup-gcloud@v1
+
+- name: Run Terraform
+  working-directory: dgi-netwatch/terraform
+  run: |
+    terraform init
+    terraform plan -var="gcp_project_id=${{ secrets.GCP_PROJECT_ID }}" -out=tfplan
+    terraform apply -input=false -auto-approve tfplan
+```
 
 ## Cost Control & Free Tier Optimization
 
@@ -71,5 +101,5 @@ kubectl get svc -n production
 
 **Destroy all resources (clean up):**
 ```bash
-terraform destroy
+terraform destroy -var="gcp_project_id=<YOUR_PROJECT_ID>"
 ```

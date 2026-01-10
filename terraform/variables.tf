@@ -1,5 +1,16 @@
-variable "kubeconfig_path" {
-  description = "Path to kubeconfig file with access to the GKE cluster (default: ~/.kube/config)."
+variable "gcp_project_id" {
+  description = "GCP project ID"
   type        = string
-  default     = "~/.kube/config"
+}
+
+variable "gcp_region" {
+  description = "GCP region for GKE cluster"
+  type        = string
+  default     = "us-central1"
+}
+
+variable "gke_cluster_name" {
+  description = "GKE cluster name"
+  type        = string
+  default     = "dgi_cluster"
 }
