@@ -43,6 +43,11 @@ jobs:
         run: |
           terraform init
 
+      - name: Import existing namespace (if any)
+        working-directory: terraform
+        run: |
+          terraform import kubernetes_namespace.production production || true
+
       - name: Terraform Validate & Plan
         working-directory: terraform
         run: |
