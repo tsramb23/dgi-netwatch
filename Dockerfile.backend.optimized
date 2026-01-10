@@ -1,0 +1,40 @@
+# Dockerfile.backend.optimized
+# Non-destructive optimized Dockerfile for review
+# - creates non-root user
+# - keeps layer caching pattern
+# - sets NODE_ENV and includes a lightweight HEALTHCHECK using node
+
+FROM node:18-alpine
+
+LABEL maintainer="dgi-netwatch"
+
+WORKDIR /app
+
+# Copy package manifests first for better layer caching
+COPY backend/package*.json ./
+
+# Install production dependencies only
+RUN npm ci --only=production
+
+# Copy application source
+COPY backend/ .
+
+# Set production env
+ENV NODE_ENV=production
+
+# Create a dedicated non-root user and set ownership
+RUN addgroup -S app && adduser -S app -G app \
+    && chown -R app:app /app
+
+# Expose application port
+EXPOSE 3001
+
+# Healthcheck: use node (present in image) to query /api/sante
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://127.0.0.1:3001/api/sante',res=>{if(res.statusCode!==200) process.exit(1)}).on('error',()=>process.exit(1))" || exit 1
+
+# Run as non-root user
+USER app
+
+# Default start command
+CMD ["node", "server.js"]

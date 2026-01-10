@@ -1,0 +1,39 @@
+# Dockerfile.frontend.optimized
+# Multi-stage build: build with Node, serve with nginx
+# - accepts build-arg `VITE_API_URL` to bake API URL at build time
+# - final image includes curl for a HEALTHCHECK
+
+FROM node:18-alpine AS build
+WORKDIR /app
+
+# Allow passing VITE_API_URL at build time (optional)
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
+
+COPY frontend/package*.json ./
+RUN npm ci
+
+COPY frontend/ .
+
+# Build the static assets (Vite will embed VITE_API_URL at build time)
+RUN npm run build
+
+FROM nginx:alpine
+LABEL maintainer="dgi-netwatch"
+
+# Install curl for healthcheck (small size impact)
+RUN apk add --no-cache curl
+
+# Note: we recommend NOT proxying to localhost when frontend and backend are different pods.
+# Prefer an ingress rule or proxy_pass to the backend service DNS (eg. http://dgi-netwatch-backend:3001).
+# This file leaves nginx plain and expects an ingress to route /api to backend.
+
+# Copy static build
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Simple healthcheck against root
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://127.0.0.1/ || exit 1
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

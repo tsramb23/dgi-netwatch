@@ -296,5 +296,5 @@ Pour toute question ou problème, veuillez consulter la documentation ou contact
 ---
 
 **Version** : 1.0.0  
-**Dernière mise à jour** : Décembre 2024  
+**Dernière mise à jour** : Décembre 2025  
 **Environnement** : Production

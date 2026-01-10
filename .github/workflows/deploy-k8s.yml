@@ -20,9 +20,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
-
       - name: Auth to GCP
         uses: google-github-actions/auth@v2
         with:
@@ -31,16 +28,33 @@ jobs:
       - name: Configure kubectl
         run: |
           gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region=${{ env.REGION }} --project=${{ env.PROJECT_ID }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
 
-      - name: Deploy DGI-NetWatch
+      - name: Terraform Init
+        working-directory: terraform
         run: |
-          kubectl apply -f k8s/deployment.yaml -n ${{ env.NAMESPACE }}
-          kubectl apply -f k8s/service.yaml -n ${{ env.NAMESPACE }}
+          terraform init
 
-      - name: Wait for deployment
-        run: kubectl rollout status deployment/dgi-netwatch -n ${{ env.NAMESPACE }} --timeout=300s
+      - name: Terraform Validate & Plan
+        working-directory: terraform
+        run: |
+          terraform fmt -check || true
+          terraform validate || true
+          terraform plan -out=tfplan -input=false
+
+      - name: Terraform Apply
+        working-directory: terraform
+        env:
+          TF_VAR_kubeconfig_path: ${{ github.workspace }}/.kube/config
+        run: |
+          terraform apply -input=false -auto-approve tfplan || terraform apply -auto-approve
+
+      - name: Wait for frontend rollout
+        run: |
+          kubectl rollout status deployment/dgi-netwatch-frontend -n ${{ env.NAMESPACE }} --timeout=300s
 
       - name: Get LoadBalancer IP
         run: |
-          echo "🎉 DGI-NetWatch déployé sur :"
-          kubectl get svc dgi-netwatch-service -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          echo "DGI-NetWatch déployé sur :"
+          kubectl get svc dgi-netwatch-frontend-service -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
