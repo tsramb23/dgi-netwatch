@@ -40,15 +40,19 @@ jobs:
         working-directory: terraform
         run: |
           terraform fmt -check || true
-          terraform validate || true
-          terraform plan -out=tfplan -input=false
+          terraform validate
+          terraform plan -out=tfplan -input=false \
+            -var="gcp_project_id=${{ env.PROJECT_ID }}" \
+            -var="gcp_region=${{ env.REGION }}" \
+            -var="gke_cluster_name=${{ env.CLUSTER_NAME }}"
 
       - name: Terraform Apply
         working-directory: terraform
-        env:
-          TF_VAR_kubeconfig_path: ${{ github.workspace }}/.kube/config
         run: |
-          terraform apply -input=false -auto-approve tfplan || terraform apply -auto-approve
+          terraform apply -input=false -auto-approve tfplan \
+            -var="gcp_project_id=${{ env.PROJECT_ID }}" \
+            -var="gcp_region=${{ env.REGION }}" \
+            -var="gke_cluster_name=${{ env.CLUSTER_NAME }}"
 
       - name: Wait for frontend rollout
         run: |
