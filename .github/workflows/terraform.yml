@@ -63,14 +63,11 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -input=false -auto-approve tfplan
 
-      - name: Get Deployment Status
+      - name: Verify Deployment
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
-          echo "=== Backend Deployment ==="
-          kubectl get deployment dgi-netwatch-backend -n production -o wide
-          echo ""
-          echo "=== Frontend Deployment ==="
-          kubectl get deployment dgi-netwatch-frontend -n production -o wide
+          echo "=== Deployments ==="
+          kubectl get deployment -n production
           echo ""
           echo "=== Services ==="
           kubectl get svc -n production
