@@ -2,6 +2,10 @@ resource "kubernetes_namespace" "production" {
   metadata {
     name = "production"
   }
+
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 resource "kubernetes_deployment" "backend" {
@@ -14,7 +18,7 @@ resource "kubernetes_deployment" "backend" {
   }
 
   lifecycle {
-    create_before_destroy = true
+    ignore_changes = [spec[0].template[0].spec[0].containers, metadata[0].generation]
   }
 
   spec {
@@ -105,7 +109,7 @@ resource "kubernetes_deployment" "frontend" {
   }
 
   lifecycle {
-    create_before_destroy = true
+    ignore_changes = [spec[0].template[0].spec[0].containers, metadata[0].generation]
   }
 
   spec {
