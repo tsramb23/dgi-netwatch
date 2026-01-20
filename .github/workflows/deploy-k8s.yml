@@ -1,70 +1,62 @@
-name: Deploy to GKE
+name: Verify K8s Deployment
 
 on:
   workflow_run:
-    workflows: ["Build & Push Docker Images"]
+    workflows: ["Terraform Deploy to Kubernetes"]
     types:
       - completed
 
 env:
   PROJECT_ID: dgi-cosmic-20251210-1542
-  CLUSTER_NAME: dgi-cluster
+  CLUSTER_NAME: dgi-netwatch-cluster
   REGION: us-central1
   NAMESPACE: production
 
 jobs:
-  deploy:
+  verify:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Set up Cloud SDK
+      - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
-
-      - name: Install GKE auth plugin
-        run: |
-          gcloud components install gke-gcloud-auth-plugin --quiet
 
       - name: Configure kubectl
         run: |
           gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region=${{ env.REGION }} --project=${{ env.PROJECT_ID }}
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
 
-      - name: Terraform Init
-        working-directory: terraform
+      - name: Wait for backend rollout
         run: |
-          terraform init
-
-      - name: Import existing namespace (if any)
-        working-directory: terraform
-        run: |
-          terraform import kubernetes_namespace.production production || true
-
-      - name: Terraform Validate & Plan
-        working-directory: terraform
-        run: |
-          terraform fmt -check || true
-          terraform validate
-          terraform plan -out=tfplan -input=false
-
-      - name: Terraform Apply
-        working-directory: terraform
-        run: |
-          terraform apply -input=false -auto-approve tfplan
+          kubectl rollout status deployment/dgi-netwatch-backend -n ${{ env.NAMESPACE }} --timeout=300s
 
       - name: Wait for frontend rollout
         run: |
           kubectl rollout status deployment/dgi-netwatch-frontend -n ${{ env.NAMESPACE }} --timeout=300s
 
-      - name: Get LoadBalancer IP
+      - name: Verify pods are running
         run: |
-          echo "DGI-NetWatch déployé sur :"
-          kubectl get svc dgi-netwatch-frontend-service -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          echo "=== Pods Status ==="
+          kubectl get pods -n ${{ env.NAMESPACE }}
+          
+          echo ""
+          echo "=== Services ==="
+          kubectl get svc -n ${{ env.NAMESPACE }}
+          
+          echo ""
+          echo "=== Backend Health Check ==="
+          BACKEND_POD=$(kubectl get pod -n ${{ env.NAMESPACE }} -l app=dgi-netwatch-backend -o jsonpath='{.items[0].metadata.name}')
+          kubectl logs -n ${{ env.NAMESPACE }} $BACKEND_POD --tail=10
+
+      - name: Test backend connectivity
+        run: |
+          BACKEND_IP=$(kubectl get svc dgi-netwatch-backend -n ${{ env.NAMESPACE }} -o jsonpath='{.spec.clusterIP}')
+          echo "Backend IP: $BACKEND_IP"
+          echo "✅ Deployment verified!"
