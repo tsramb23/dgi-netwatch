@@ -35,7 +35,9 @@ jobs:
 
       - name: Configure kubectl
         run: |
-          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region=${{ env.REGION }} --project=${{ env.PROJECT_ID }}
+          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} \
+            --region=${{ env.REGION }} \
+            --project=${{ env.PROJECT_ID }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -72,24 +74,3 @@ jobs:
           echo ""
           echo "=== Services ==="
           kubectl get svc -n production
-          TF_VAR_kubeconfig_path: ${{ github.workspace }}/.kube/config
-        run: terraform apply -auto-approve
-
-      - name: Wait for frontend rollout
-        run: |
-          kubectl rollout status deployment/dgi-netwatch-frontend -n production --timeout=300s
-
-      - name: Wait for backend rollout
-        run: |
-          kubectl rollout status deployment/dgi-netwatch-backend -n production --timeout=300s
-
-      - name: Verify services
-        run: |
-          echo "=== Frontend Service (ClusterIP) ==="
-          kubectl get svc dgi-netwatch-frontend-service -n production -o wide
-          echo ""
-          echo "=== Backend Service (ClusterIP) ==="
-          kubectl get svc dgi-netwatch-backend -n production -o wide
-          echo ""
-          echo "=== Pods Status ==="
-          kubectl get pods -n production -o wide
