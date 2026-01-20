@@ -20,10 +20,8 @@ env:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
@@ -34,10 +32,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Configure kubectl
-        run: |
-          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} \
-            --region=${{ env.REGION }} \
-            --project=${{ env.PROJECT_ID }}
+        run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region=${{ env.REGION }} --project=${{ env.PROJECT_ID }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -45,10 +40,6 @@ jobs:
       - name: Terraform Init
         working-directory: terraform
         run: terraform init
-
-      - name: Terraform Format Check
-        working-directory: terraform
-        run: terraform fmt -check || terraform fmt -write=true
 
       - name: Terraform Validate
         working-directory: terraform
@@ -65,9 +56,4 @@ jobs:
 
       - name: Verify Deployment
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          echo "=== Deployments ==="
-          kubectl get deployment -n production
-          echo ""
-          echo "=== Services ==="
-          kubectl get svc -n production
+        run: kubectl get deployments,services -n production
