@@ -5,7 +5,10 @@ resource "kubernetes_namespace" "production" {
 
   lifecycle {
     ignore_changes = all
+    create_before_destroy = true
   }
+
+  depends_on = []
 }
 
 resource "kubernetes_deployment" "backend" {
