@@ -52,6 +52,12 @@ jobs:
           terraform import kubernetes_deployment.backend production/dgi-netwatch-backend || true
           terraform import kubernetes_deployment.frontend production/dgi-netwatch-frontend || true
 
+      - name: Import existing services
+        working-directory: terraform
+        run: |
+          terraform import kubernetes_service.backend production/dgi-netwatch-backend || true
+          terraform import kubernetes_service.frontend production/dgi-netwatch-frontend-service || true
+
       - name: Terraform Validate
         working-directory: terraform
         run: terraform validate
