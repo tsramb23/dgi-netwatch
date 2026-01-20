@@ -29,6 +29,9 @@ jobs:
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
 
+      - name: Install GKE Auth Plugin
+        run: gcloud components install gke-gcloud-auth-plugin
+
       - name: Configure kubectl
         run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
 
