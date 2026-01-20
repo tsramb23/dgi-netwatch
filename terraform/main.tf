@@ -13,6 +13,11 @@ resource "kubernetes_deployment" "backend" {
     }
   }
 
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [spec[0].template[0].spec[0].containers[0].image]
+  }
+
   spec {
     replicas = 1
 
@@ -98,6 +103,11 @@ resource "kubernetes_deployment" "frontend" {
     labels = {
       app = "dgi-netwatch-frontend"
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [spec[0].template[0].spec[0].containers[0].image]
   }
 
   spec {
