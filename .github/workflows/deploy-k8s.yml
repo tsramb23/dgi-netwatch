@@ -10,16 +10,13 @@ env:
   PROJECT_ID: dgi-cosmic-20251210-1542
   CLUSTER_NAME: dgi-netwatch-cluster
   REGION: us-central1
-  NAMESPACE: production
 
 jobs:
-  verify:
+  verify-deployment:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
@@ -30,21 +27,16 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Configure kubectl
-        run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region=${{ env.REGION }} --project=${{ env.PROJECT_ID }}
+        run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
 
-      - name: Wait for backend rollout
-        run: kubectl rollout status deployment/dgi-netwatch-backend -n ${{ env.NAMESPACE }} --timeout=300s
+      - name: Wait for Backend Rollout
+        run: kubectl rollout status deployment/dgi-netwatch-backend -n production --timeout=300s
 
-      - name: Wait for frontend rollout
-        run: kubectl rollout status deployment/dgi-netwatch-frontend -n ${{ env.NAMESPACE }} --timeout=300s
+      - name: Wait for Frontend Rollout
+        run: kubectl rollout status deployment/dgi-netwatch-frontend -n production --timeout=300s
 
-      - name: Verify pods are running
-        run: |
-          echo "=== Pods Status ==="
-          kubectl get pods -n ${{ env.NAMESPACE }}
-          echo ""
-          echo "=== Services ==="
-          kubectl get svc -n ${{ env.NAMESPACE }}
+      - name: Verify Pods Status
+        run: kubectl get pods -n production
 
-      - name: Test backend connectivity
-        run: echo "✅ Deployment verified!"
+      - name: Check Service Endpoints
+        run: kubectl get svc -n production
