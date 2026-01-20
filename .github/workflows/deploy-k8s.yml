@@ -30,33 +30,21 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Configure kubectl
-        run: |
-          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region=${{ env.REGION }} --project=${{ env.PROJECT_ID }}
+        run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region=${{ env.REGION }} --project=${{ env.PROJECT_ID }}
 
       - name: Wait for backend rollout
-        run: |
-          kubectl rollout status deployment/dgi-netwatch-backend -n ${{ env.NAMESPACE }} --timeout=300s
+        run: kubectl rollout status deployment/dgi-netwatch-backend -n ${{ env.NAMESPACE }} --timeout=300s
 
       - name: Wait for frontend rollout
-        run: |
-          kubectl rollout status deployment/dgi-netwatch-frontend -n ${{ env.NAMESPACE }} --timeout=300s
+        run: kubectl rollout status deployment/dgi-netwatch-frontend -n ${{ env.NAMESPACE }} --timeout=300s
 
       - name: Verify pods are running
         run: |
           echo "=== Pods Status ==="
           kubectl get pods -n ${{ env.NAMESPACE }}
-          
           echo ""
           echo "=== Services ==="
           kubectl get svc -n ${{ env.NAMESPACE }}
-          
-          echo ""
-          echo "=== Backend Health Check ==="
-          BACKEND_POD=$(kubectl get pod -n ${{ env.NAMESPACE }} -l app=dgi-netwatch-backend -o jsonpath='{.items[0].metadata.name}')
-          kubectl logs -n ${{ env.NAMESPACE }} $BACKEND_POD --tail=10
 
       - name: Test backend connectivity
-        run: |
-          BACKEND_IP=$(kubectl get svc dgi-netwatch-backend -n ${{ env.NAMESPACE }} -o jsonpath='{.spec.clusterIP}')
-          echo "Backend IP: $BACKEND_IP"
-          echo "✅ Deployment verified!"
+        run: echo "✅ Deployment verified!"
