@@ -18,7 +18,7 @@ resource "kubernetes_deployment" "backend" {
   }
 
   lifecycle {
-    ignore_changes = [spec[0].template[0].spec[0].containers, metadata[0].generation]
+    ignore_changes = [spec]
   }
 
   spec {
@@ -109,7 +109,7 @@ resource "kubernetes_deployment" "frontend" {
   }
 
   lifecycle {
-    ignore_changes = [spec[0].template[0].spec[0].containers, metadata[0].generation]
+    ignore_changes = [spec]
   }
 
   spec {
