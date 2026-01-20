@@ -18,7 +18,7 @@ provider "google" {
   region  = "us-central1"
 }
 
-# Provider Kubernetes (utilise la config générée par gcloud)
+# Provider Kubernetes (assumes existing cluster via kubeconfig)
 provider "kubernetes" {
   config_path = "~/.kube/config"
 }

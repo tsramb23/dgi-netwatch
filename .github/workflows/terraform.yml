@@ -2,15 +2,13 @@ name: Terraform Deploy to Kubernetes
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - 'terraform/**'
       - 'backend/**'
       - 'frontend/**'
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 env:
   PROJECT_ID: dgi-cosmic-20251210-1542
@@ -32,7 +30,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Configure kubectl
-        run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region=${{ env.REGION }} --project=${{ env.PROJECT_ID }}
+        run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
