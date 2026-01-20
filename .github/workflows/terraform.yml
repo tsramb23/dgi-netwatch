@@ -12,7 +12,7 @@ on:
 
 env:
   PROJECT_ID: dgi-cosmic-20251210-1542
-  CLUSTER_NAME: dgi-netwatch-cluster
+  CLUSTER_NAME: dgi-cluster
   REGION: us-central1
 
 jobs:
