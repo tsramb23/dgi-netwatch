@@ -32,6 +32,18 @@ jobs:
       - name: Configure kubectl
         run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
 
+      - name: Force pod restart to pull latest images
+        run: |
+          kubectl rollout restart deployment/dgi-netwatch-backend -n production
+          kubectl rollout restart deployment/dgi-netwatch-frontend -n production
+          sleep 10
+
+      - name: Wait for Backend Rollout
+        run: kubectl rollout status deployment/dgi-netwatch-backend -n production --timeout=300s
+
+      - name: Wait for Frontend Rollout
+        run: kubectl rollout status deployment/dgi-netwatch-frontend -n production --timeout=300s
+
       # - name: Wait for Backend Rollout
       #   run: kubectl rollout status deployment/dgi-netwatch-backend -n production --timeout=300s
 
