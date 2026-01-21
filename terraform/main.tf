@@ -47,6 +47,7 @@ resource "kubernetes_deployment" "backend" {
         container {
           name  = "backend"
           image = "ghcr.io/tsramb23/dgi-netwatch-backend:latest"
+          image_pull_policy = "Always"
 
           port {
             container_port = 3001
@@ -138,6 +139,7 @@ resource "kubernetes_deployment" "frontend" {
         container {
           name  = "frontend"
           image = "ghcr.io/tsramb23/dgi-netwatch-frontend:latest"
+          image_pull_policy = "Always"
 
           port {
             container_port = 80
