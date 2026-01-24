@@ -1,8 +1,8 @@
-name: Verify K8s Deployment
+name: Deploy to GKE (Immutable SHA)
 
 on:
   workflow_run:
-    workflows: ["Terraform Deploy to Kubernetes"]
+    workflows: ["Build & Push Docker Images"]
     types:
       - completed
 
@@ -10,11 +10,18 @@ env:
   PROJECT_ID: dgi-cosmic-20251210-1542
   CLUSTER_NAME: dgi-cluster
   REGION: us-central1
+  NAMESPACE: production
+
+  REGISTRY: ghcr.io
+  OWNER: tsramb23
+  IMAGE_BACKEND: dgi-netwatch-backend
+  IMAGE_FRONTEND: dgi-netwatch-frontend
 
 jobs:
-  verify-deployment:
+  deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -32,26 +39,26 @@ jobs:
       - name: Configure kubectl
         run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
 
-      - name: Force pod restart to pull latest images
+      - name: Export IMAGE_TAG from workflow_run SHA
+        run: echo "IMAGE_TAG=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_ENV
+
+      - name: Deploy backend and frontend with immutable tag
         run: |
-          kubectl rollout restart deployment/dgi-netwatch-backend -n production
-          kubectl rollout restart deployment/dgi-netwatch-frontend -n production
-          sleep 10
+          kubectl -n ${{ env.NAMESPACE }} set image deployment/dgi-netwatch-backend \
+            backend=${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_BACKEND }}:${IMAGE_TAG}
 
-      - name: Wait for Backend Rollout
-        run: kubectl rollout status deployment/dgi-netwatch-backend -n production --timeout=300s
+          kubectl -n ${{ env.NAMESPACE }} set image deployment/dgi-netwatch-frontend \
+            frontend=${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_FRONTEND }}:${IMAGE_TAG}
 
-      - name: Wait for Frontend Rollout
-        run: kubectl rollout status deployment/dgi-netwatch-frontend -n production --timeout=300s
+      - name: Wait for rollout
+        run: |
+          kubectl -n ${{ env.NAMESPACE }} rollout status deployment/dgi-netwatch-backend --timeout=300s
+          kubectl -n ${{ env.NAMESPACE }} rollout status deployment/dgi-netwatch-frontend --timeout=300s
 
-      # - name: Wait for Backend Rollout
-      #   run: kubectl rollout status deployment/dgi-netwatch-backend -n production --timeout=300s
-
-      # - name: Wait for Frontend Rollout
-      #   run: kubectl rollout status deployment/dgi-netwatch-frontend -n production --timeout=300s
-
-      - name: Verify Pods Status
-        run: kubectl get pods -n production
-
-      - name: Check Service Endpoints
-        run: kubectl get svc -n production
+      - name: Verify pods and image IDs
+        run: |
+          kubectl -n ${{ env.NAMESPACE }} get pods -o wide
+          echo "----- Backend Image -----"
+          kubectl -n ${{ env.NAMESPACE }} describe pod -l app=dgi-netwatch-backend | sed -n '/Image:/p;/Image ID:/p'
+          echo "----- Frontend Image -----"
+          kubectl -n ${{ env.NAMESPACE }} describe pod -l app=dgi-netwatch-frontend | sed -n '/Image:/p;/Image ID:/p'
