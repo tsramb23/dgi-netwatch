@@ -92,7 +92,7 @@ function App() {
       <header className="en-tete">
         <div className="en-tete-contenu">
           <h1 className="titre">DGI-NetWatch</h1>
-          <p className="sous-titre">Surveillance d'Infrastructure Test 9</p>
+          <p className="sous-titre">Surveillance d'Infrastructure Test 10 </p>
         </div>
 
         <div className="backend-info">
@@ -100,9 +100,10 @@ function App() {
             Backend pod :{" "}
             <strong>{backendInfo?.pod || "chargement..."}</strong>
             {" "} | IP :{" "}
-            <strong>{backendInfo?.ip || "..."}</strong>
+            <strong>{backendInfo?.ip || "..."}<br></br></strong>
           </small>
         </div>
+        
 
         <div className="statistiques-globales">
           <div className="stat">
