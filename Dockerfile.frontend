@@ -10,7 +10,6 @@ FROM nginx:alpine
 # Configuration Nginx CORRECTE : backend → localhost
 RUN mkdir -p /etc/nginx/http.d && echo 'server { \
   listen 80; \
-  server_name localhost; \
   location / { \
     root /usr/share/nginx/html; \
     try_files $uri /index.html; \
@@ -19,6 +18,8 @@ RUN mkdir -p /etc/nginx/http.d && echo 'server { \
     proxy_pass http://dgi-netwatch-backend:3001; \
     proxy_http_version 1.1; \
     proxy_set_header Host $host; \
+    proxy_set_header X-Real-IP $remote_addr; \
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
   } \
 }' > /etc/nginx/http.d/default.conf
 
