@@ -62,7 +62,7 @@ spec:
           ports:
             - containerPort: 80
           env:
-            - name: REACT_APP_API_URL
+            - name: API_URL
               value: "http://dgi-netwatch-backend:3001"
           resources:
             requests:
