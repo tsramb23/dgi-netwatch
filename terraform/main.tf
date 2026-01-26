@@ -34,28 +34,28 @@ resource "kubernetes_service" "backend" {
 }
 
 # Service frontend interne (ClusterIP)
-resource "kubernetes_service" "frontend_clusterip" {
-  metadata {
-    name      = "dgi-netwatch-frontend-service"
-    namespace = kubernetes_namespace.production.metadata[0].name
-    labels = {
-      app = "dgi-netwatch-frontend"
-    }
-  }
+# resource "kubernetes_service" "frontend_clusterip" {
+#   metadata {
+#     name      = "dgi-netwatch-frontend-service"
+#     namespace = kubernetes_namespace.production.metadata[0].name
+#     labels = {
+#       app = "dgi-netwatch-frontend"
+#     }
+#   }
 
-  spec {
-    selector = {
-      app = "dgi-netwatch-frontend"
-    }
+#   spec {
+#     selector = {
+#       app = "dgi-netwatch-frontend"
+#     }
 
-    port {
-      port        = 80
-      target_port = 80
-    }
+#     port {
+#       port        = 80
+#       target_port = 80
+#     }
 
-    type = "ClusterIP"
-  }
-}
+#     type = "ClusterIP"
+#   }
+# }
 
 # Service frontend exposé (LoadBalancer)
 resource "kubernetes_service" "frontend_loadbalancer" {
