@@ -25,6 +25,9 @@ function App() {
   // État pour afficher les statistiques globales
   const [statistiques, setStatistiques] = useState({ total: 0, enLigne: 0 })
 
+  const [backendInfo, setBackendInfo] = useState(null);
+
+
   /**
    * Fonction pour récupérer le statut des équipements depuis l'API
    */
@@ -60,7 +63,17 @@ function App() {
    * Configure un intervalle de 30 secondes pour rafraîchir les données
    * Nettoie l'intervalle au démontage du composant
    */
+  const recupererBackendInfo = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/info`, { timeout: 5000 });
+      setBackendInfo(res.data);
+    } catch (e) {
+      console.error("Erreur /info:", e);
+    }
+  };
+
   useEffect(() => {
+    recupererBackendInfo();
     // Récupération initiale des données
     recupererStatut()
 
@@ -80,6 +93,20 @@ function App() {
         <div className="en-tete-contenu">
           <h1 className="titre">DGI-NetWatch</h1>
           <p className="sous-titre">Surveillance d'Infrastructure Test 9</p>
+        </div>
+        <div className="backend-info">
+          <small>
+            Backend instance :{" "}
+            <strong>
+              {backendInfo?.hostname || "chargement..."}
+            </strong>
+          </small>
+        </div>
+
+        <div className="backend-info">
+          <small>
+            Backend pod : <strong>{backendInfo.pod}</strong> |           
+          </small>
         </div>
         <div className="statistiques-globales">
           <div className="stat">

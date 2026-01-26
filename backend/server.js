@@ -116,8 +116,17 @@ app.listen(PORT, () => {
   console.log(`========================================\n`);
 });
 
+app.get('/info', (req, res) => {
+  res.json({
+    hostname: process.env.HOSTNAME,
+  });
+});
+
+
 // Gestion gracieuse de l'arrêt du serveur
 process.on('SIGTERM', () => {
   console.log('Signal SIGTERM reçu. Arrêt du serveur...');
   process.exit(0);
 });
+
+
