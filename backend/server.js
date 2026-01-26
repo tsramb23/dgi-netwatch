@@ -3,6 +3,7 @@ import cors from 'cors';
 import { promisify } from 'util';
 import { exec } from 'child_process';
 import dotenv from 'dotenv';
+import os from "os";
 
 dotenv.config();
 
@@ -106,10 +107,11 @@ app.get('/api/sante', (req, res) => {
 });
 app.get("/api/info", (req, res) => {
   res.json({
-    pod: process.env.HOSTNAME,
+    pod: process.env.HOSTNAME || os.hostname(),
+    hostname: os.hostname(),  
     ip: req.socket.localAddress
   });
-});
+}); 
 
 // Démarrage du serveur
 app.listen(PORT, () => {
