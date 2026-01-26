@@ -116,7 +116,7 @@ app.listen(PORT, () => {
   console.log(`========================================\n`);
 });
 
-app.get('/info', (req, res) => {
+app.get('/api/info', (req, res) => {
   res.json({
     hostname: process.env.HOSTNAME,
   });

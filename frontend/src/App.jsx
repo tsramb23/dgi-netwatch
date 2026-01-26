@@ -65,7 +65,7 @@ function App() {
    */
   const recupererBackendInfo = async () => {
     try {
-      const res = await axios.get(`${API_URL}/info`, { timeout: 5000 });
+      const res = await axios.get(`${API_URL}/api/info`, { timeout: 5000 });
       setBackendInfo(res.data);
     } catch (e) {
       console.error("Erreur /info:", e);
@@ -94,18 +94,10 @@ function App() {
           <h1 className="titre">DGI-NetWatch</h1>
           <p className="sous-titre">Surveillance d'Infrastructure Test 9</p>
         </div>
-        <div className="backend-info">
-          <small>
-            Backend instance :{" "}
-            <strong>
-              {backendInfo?.hostname || "chargement..."}
-            </strong>
-          </small>
-        </div>
 
         <div className="backend-info">
           <small>
-            Backend pod : <strong>{backendInfo.pod}</strong> |           
+            Backend pod : <strong>{backendInfo.hostname}</strong> |           
           </small>
         </div>
         <div className="statistiques-globales">
