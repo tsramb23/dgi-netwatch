@@ -17,7 +17,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: backend
-          image: ghcr.io/tsramb23/dgi-netwatch-backend:${GITHUB_SHA}
+          image: ghcr.io/tsramb23/dgi-netwatch-backend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3001
@@ -57,7 +57,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: frontend
-          image: ghcr.io/tsramb23/dgi-netwatch-frontend:${GITHUB_SHA}
+          image: ghcr.io/tsramb23/dgi-netwatch-frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
