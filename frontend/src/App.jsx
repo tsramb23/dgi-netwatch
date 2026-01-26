@@ -75,7 +75,7 @@ function App() {
   useEffect(() => {
     recupererBackendInfo();
     // Récupération initiale des données
-    recupererStatut()
+    recupererStatut();
 
     // Configuration du rafraîchissement automatique toutes les 30 secondes
     const intervalle = setInterval(() => {
@@ -92,13 +92,13 @@ function App() {
       <header className="en-tete">
         <div className="en-tete-contenu">
           <h1 className="titre">DGI-NetWatch</h1>
-          <p className="sous-titre">Surveillance d'Infrastructure Test 12</p>
+          <p className="sous-titre">Surveillance d'Infrastructure Test 13</p>
         </div>
 
         <div className="backend-info">
           <small>
             Backend pod :{" "}
-            <strong>{backendInfo?.pod || "chargement..."}</strong>
+            <strong>{backendInfo?.pod}</strong>
             {" "} | IP :{" "}
             <strong>{backendInfo?.ip || "..."}</strong>
           </small>
