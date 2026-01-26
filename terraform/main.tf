@@ -58,7 +58,7 @@ resource "kubernetes_service" "backend" {
 # }
 
 # Service frontend exposé (LoadBalancer)
-resource "kubernetes_service" "frontend_loadbalancer" {
+resource "kubernetes_service" "frontend-loadbalancer" {
   metadata {
     name      = "dgi-netwatch-frontend-service"
     namespace = kubernetes_namespace.production.metadata[0].name
