@@ -97,9 +97,13 @@ function App() {
 
         <div className="backend-info">
           <small>
-            Backend pod : <strong>{backendInfo.hostname}</strong> |           
+            Backend pod :{" "}
+            <strong>{backendInfo?.pod || "chargement..."}</strong>
+            {" "} | IP :{" "}
+            <strong>{backendInfo?.ip || "..."}</strong>
           </small>
         </div>
+
         <div className="statistiques-globales">
           <div className="stat">
             <span className="label">Total</span>

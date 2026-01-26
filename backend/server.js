@@ -104,6 +104,12 @@ app.get('/api/sante', (req, res) => {
     horodatage: new Date().toISOString()
   });
 });
+app.get("/api/info", (req, res) => {
+  res.json({
+    pod: process.env.HOSTNAME,
+    ip: req.socket.localAddress
+  });
+});
 
 // Démarrage du serveur
 app.listen(PORT, () => {
@@ -116,11 +122,7 @@ app.listen(PORT, () => {
   console.log(`========================================\n`);
 });
 
-app.get('/api/info', (req, res) => {
-  res.json({
-    hostname: process.env.HOSTNAME,
-  });
-});
+
 
 
 // Gestion gracieuse de l'arrêt du serveur
