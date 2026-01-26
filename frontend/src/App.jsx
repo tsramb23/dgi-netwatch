@@ -3,7 +3,7 @@ import axios from 'axios'
 
 // URL de l'API backend - peut être modifiée via variable d'environnement
 // const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const API_URL = "http://dgi-netwatch-backend:3001";
+const API_URL = import.meta.env.VITE_API_URL || ""
 
 
 /**
@@ -94,7 +94,7 @@ function App() {
       <header className="en-tete">
         <div className="en-tete-contenu">
           <h1 className="titre">DGI-NetWatch</h1>
-          <p className="sous-titre">Surveillance d'Infrastructure Test 14</p>
+          <p className="sous-titre">Surveillance d'Infrastructure Test 15</p>
         </div>
 
         <div className="backend-info">
