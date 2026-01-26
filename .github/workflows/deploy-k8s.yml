@@ -43,10 +43,7 @@ jobs:
         run: echo "IMAGE_TAG=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_ENV
       
       - name: Apply Kubernetes manifests (structure)
-        run: |
-          kubectl apply -f k8s/service-backend.yaml
-          kubectl apply -f k8s/service-frontend-loadbalancer.yaml
-          kubectl apply -f k8s/deployment-backend-frontend.yaml
+        run: kubectl apply -f k8s/deployment-backend-frontend.yaml
           
       - name: Deploy backend and frontend with immutable tag
         run: |
