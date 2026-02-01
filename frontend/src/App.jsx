@@ -94,7 +94,7 @@ function App() {
       <header className="en-tete">
         <div className="en-tete-contenu">
           <h1 className="titre">DGI-NetWatch</h1>
-          <p className="sous-titre">Surveillance d'Infrastructure Test 17</p>
+          <p className="sous-titre">Surveillance d'Infrastructure Test 18</p>
         </div>
 
         <div className="backend-info">
